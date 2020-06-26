@@ -1,0 +1,51 @@
+//creating class for cart
+public class CartDetails
+{
+public char SKUId{get;set;}
+public decimal unitprice{get;set}
+public int qty{get;set;}
+public deecimal linetotal{get;set;}
+}
+
+//creating method for promotions which accept the cart details and return the modified cart details(promotion applied)
+
+public List<CartDetails> promotionEngine(List<CartDetails> ListCartdetails)
+{
+
+    foreach(var item in ListCartdetails)
+    {
+      if(item.SKUId!='C' &&item.SKUId!='D'){
+        item.linetotal=GetPromotedVal(item.qty,item.SKUId);
+      }
+    }
+    int Ccount=ListCartdetails.where(e=>e.SKUId=='C').select(e=>e).ToList().Count();
+    int Dcount=ListCartdetails.where(e=>e.SKUId=='D').select(e=>e).ToList().Count();
+    if(Ccount>Dcount){
+     ListCartdetails= ListCartdetails.where(e=>e.SKUId=='D').select(e=>{e.SKUId=e.SKUId,e.unitprice=0,e.qty=e.qty,e.linetotal=0}).ToList().Count();
+    }else{
+     ListCartdetails= ListCartdetails.where(e=>e.SKUId=='C').select(e=>{e.SKUId=e.SKUId,e.unitprice=0,e.qty=e.qty,e.linetotal=0}).ToList().Count();    
+    }
+return ListCartdetails;
+}
+
+public decimal GetPromotedVal(int qty,char SKUId){
+  decimal val=0;
+  switch(SKUId)
+  {
+    case 'A': if(qty>=3)
+              {
+                val=(qty/3)*130+(qty%3)*50;
+              }else{
+                val=qty*50;
+              }
+              break;
+  case 'B':  if(qty>=2)
+              {
+                val=(qty/2)*45+(qty%2)*30;
+              }else{
+                val=qty*30;
+              }
+              break;             
+  }
+  return val;
+}
